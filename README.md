@@ -1,2 +1,2 @@
-#SQL Practise
-Area to post SQL from Leetcode 
+# Leet Code Practise
+This repository contains SQL practise from Leetcode
