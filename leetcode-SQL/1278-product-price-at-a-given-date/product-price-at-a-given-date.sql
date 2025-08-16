@@ -1,22 +1,24 @@
-WITH latest_prices AS (
-    SELECT 
-        product_id,
-        new_price,
-        change_date,
-        ROW_NUMBER() OVER (
-            PARTITION BY product_id
-            ORDER BY change_date DESC
-        ) AS rn
-    FROM products
-    WHERE change_date <= '2019-08-16'
+with date_filter as (
+select 
+*
+, row_number() over (partition by product_id  order by change_date desc) as newcol
+from products
+where change_date <= '2019-08-16'
+
 ),
-all_products AS (
-    SELECT DISTINCT product_id FROM products
+
+all_prods as (
+select product_id from products
+group by product_id
+
 )
 
-SELECT 
-    p.product_id,
-    ISNULL(lp.new_price, 10) AS price
-FROM all_products p
-LEFT JOIN latest_prices lp
-    ON p.product_id = lp.product_id AND lp.rn = 1
+select all_prods.product_id
+, isnull(new_price, 10) as price
+
+from all_prods
+left join date_filter 
+on all_prods.product_id = date_filter.product_id and newcol= 1
+
+
+
